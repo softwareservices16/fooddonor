@@ -6,13 +6,15 @@ const uploadImage = require("../config/uploadImage");
 const ObjectId = mongoose.Types.ObjectId;
 var app = express();
 
-/* GET home page. */
 app.post("/login", async function (req, res, next) {
   const user = await User.findOne({
     email: req.body.email,
     password: req.body.password,
   });
-  res.send({ success: user ? true : false, data: user });
+  if (user) {
+    res.send({ success: user ? true : false, data: user });
+  }
+  return res.status(500).send({ success: false, message: "No user found!" });
 });
 
 app.post("/addItemDoner", uploadImage, async function (req, res) {
