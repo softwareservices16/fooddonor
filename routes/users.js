@@ -23,7 +23,7 @@ app.get("/getItemsDonated/:id", async (req, res) => {
   try {
     // const userId = req.params.id;
     const { latitude, longitude } = req?.query;
-    const radiusKm = 500;
+    const radiusKm = 500000;
 
     const data = await Items.aggregate([
       {
