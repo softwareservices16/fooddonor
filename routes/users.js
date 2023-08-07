@@ -23,7 +23,7 @@ app.get("/getItemsDonated/:id", async (req, res) => {
   try {
     // const userId = req.params.id;
     const { latitude, longitude } = req?.query;
-    const radiusKm = 500000;
+    const radiusKm = 100;
 
     const data = await Items.aggregate([
       {
@@ -35,13 +35,12 @@ app.get("/getItemsDonated/:id", async (req, res) => {
           distanceField: "distance",
           includeLocs: "dist.location",
           spherical: true,
-          // maxDistance: radiusKm * 1000,
+          maxDistance: radiusKm * 1000,
         },
       },
       {
         $match: {
           quantity: { $gt: 0 },
-          expiryDate: { $gt: Date.now() },
         },
       },
       {
