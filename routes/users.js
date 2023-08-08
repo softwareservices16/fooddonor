@@ -2,6 +2,7 @@ var express = require("express");
 const User = require("../modals/users");
 const Items = require("../modals/items");
 const { ObjectId } = require("mongodb");
+const pickup = require("../modals/pickup");
 var app = express();
 
 app.post("/signup", async function (req, res, next) {
@@ -65,6 +66,7 @@ app.post("/pickup/:itemId", async (req, res) => {
       { quantity: data.quantity - 1 },
       { new: true }
     );
+    await pickup.create({ ...req.data, item: itemId });
     res.send({ success: true, data });
   } else {
     res.status(500).send({ success: false });

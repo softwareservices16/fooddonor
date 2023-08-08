@@ -12,7 +12,7 @@ app.post("/login", async function (req, res, next) {
     password: req.body.password,
   });
   if (user) {
-    res.send({ success: user ? true : false, data: user });
+    return res.send({ success: user ? true : false, data: user });
   }
   return res.status(500).send({ success: false, message: "No user found!" });
 });
