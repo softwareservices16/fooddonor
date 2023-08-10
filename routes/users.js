@@ -36,7 +36,8 @@ app.get("/getItemsDonated/:id", async (req, res) => {
           distanceField: "distance",
           includeLocs: "dist.location",
           spherical: true,
-          maxDistance: radiusKm * 1000,
+          // maxDistance: radiusKm * 1000,
+          distanceMultiplier: 0.001,
         },
       },
       {

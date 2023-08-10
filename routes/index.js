@@ -36,7 +36,6 @@ app.get("/donor/getItemsDonated/:id", async (req, res) => {
     var data = await Items.find({
       user: new ObjectId(userId),
       quantity: { $gt: 0 },
-      expiryDate: { $gte: Date.now() },
     }).sort({
       createdAt: -1,
     });
