@@ -72,8 +72,8 @@ app.delete("/deleteItem/:itemId", async (req, res) => {
 app.get("/donor/pickup/:pickUpId", async (req, res) => {
   const pickUpId = req.params.pickUpId;
   if (req.query.status) {
-    let pickupData = await pickup.updateOne({ _id: new ObjectId(pickUpId) }, { $set: { status: req.query.status } }, { new: true });
-    console.log(pickupData);
+    await pickup.updateOne({ _id: new ObjectId(pickUpId) }, { $set: { status: req.query.status } }, { new: true });
+    let pickupData = pickup.findOne(new ObjectId(pickUpId));
     if (req.query.status == "ACCEPTED")
       await Items.updateOne(
         { _id: new ObjectId(pickupData.item) },
