@@ -62,16 +62,17 @@ app.post("/pickup/:itemId", async (req, res) => {
   const itemId = req.params.itemId;
   const data = await Items.findOne(new ObjectId(itemId));
   if (data?.quantity > 0) {
-    await Items.updateOne(
-      { _id: new ObjectId(itemId) },
-      { quantity: data.quantity - 1 },
-      { new: true }
-    );
-    await pickup.create({ ...req.data, item: itemId });
+    await pickup.create({ ...req.body, item: itemId });
     res.send({ success: true, data });
   } else {
     res.status(500).send({ success: false });
   }
+});
+
+app.get("/getItemsPicked/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  let data = await pickup.find({ userId: userId }).populate("item");
+  res.send({ status: true, data })
 });
 
 module.exports = app;

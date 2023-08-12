@@ -3,6 +3,7 @@ const User = require("../modals/users");
 const Items = require("../modals/items");
 const mongoose = require("mongoose");
 const uploadImage = require("../config/uploadImage");
+const pickup = require("../modals/pickup");
 const ObjectId = mongoose.Types.ObjectId;
 var app = express();
 
@@ -33,13 +34,25 @@ app.use("/uploadImage", uploadImage);
 app.get("/donor/getItemsDonated/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    var data = await Items.find({
-      user: new ObjectId(userId),
-      quantity: { $gt: 0 },
-    }).sort({
-      createdAt: -1,
-    });
-
+    var data = await Items.aggregate([
+      {
+        $lookup: {
+          from: 'pickups',
+          localField: '_id',
+          foreignField: 'item',
+          as: 'pickups',
+        },
+      }, {
+        $match: {
+          user: new ObjectId(userId),
+          quantity: { $gt: 0 },
+        }
+      }, {
+        $sort: {
+          createdAt: -1,
+        }
+      }
+    ]);
     res.send({ success: true, data });
   } catch (err) {
     console.error(err);
@@ -55,5 +68,20 @@ app.delete("/deleteItem/:itemId", async (req, res) => {
     res.status(500).send({ status: false });
   }
 });
+
+app.get("/donor/pickup/:pickUpId", async (req, res) => {
+  const pickUpId = req.params.pickUpId;
+  if (req.query.status) {
+    await pickup.updateOne({ _id: new ObjectId(pickUpId) }, { $set: { status: req.query.status } }, { new: true });
+    if (req.query.status == "ACCEPTED")
+      await Items.updateOne(
+        { _id: new ObjectId(itemId) },
+        { quantity: data.quantity - 1 },
+        { new: true }
+      );
+  }
+  res.send({ message: "Success" })
+});
+
 
 module.exports = app;
