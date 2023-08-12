@@ -73,7 +73,8 @@ app.get("/donor/pickup/:pickUpId", async (req, res) => {
   const pickUpId = req.params.pickUpId;
   if (req.query.status) {
     await pickup.updateOne({ _id: new ObjectId(pickUpId) }, { $set: { status: req.query.status } }, { new: true });
-    let pickupData = pickup.findOne(new ObjectId(pickUpId));
+    let pickupData = await pickup.findOne(new ObjectId(pickUpId));
+    console.log(pickupData);
     if (req.query.status == "ACCEPTED")
       await Items.updateOne(
         { _id: new ObjectId(pickupData.item) },
