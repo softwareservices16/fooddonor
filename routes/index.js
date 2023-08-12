@@ -76,7 +76,7 @@ app.get("/donor/pickup/:pickUpId", async (req, res) => {
     if (req.query.status == "ACCEPTED")
       await Items.updateOne(
         { _id: new ObjectId(pickupData.item) },
-        { quantity: data.quantity - 1 },
+        { $inc: { 'quantity': -1 } },
         { new: true }
       );
   }
