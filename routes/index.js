@@ -86,4 +86,47 @@ app.get("/donor/pickup/:pickUpId", async (req, res) => {
 });
 
 
+app.get("/donor/getPickUps/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const data = await Items.aggregate([
+    {
+      $lookup: {
+        from: 'pickups',
+        localField: '_id',
+        foreignField: 'item',
+        as: 'pickups',
+      },
+    },
+    {
+      $match: {
+        user: new ObjectId(userId),
+        quantity: { $gt: 0 },
+      }
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      }
+    }
+  ]);
+  
+  const pickupsWithItems = [];
+  for (const item of data) {
+    for (const _pickup of item.pickups) {
+      const populatedPickup = await pickup.findById(_pickup._id)
+        .populate('item')
+        .exec();
+  
+      if (populatedPickup) {
+        pickupsWithItems.push(populatedPickup);
+      }
+    }
+  }
+  
+  console.log(pickupsWithItems);
+  res.send({ success: true, data: pickupsWithItems });
+  
+});
+
+
 module.exports = app;
