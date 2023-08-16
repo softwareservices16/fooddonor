@@ -123,7 +123,6 @@ app.get("/donor/getPickUps/:userId", async (req, res) => {
     }
   }
   
-  console.log(pickupsWithItems);
   res.send({ success: true, data: pickupsWithItems });
   
 });
